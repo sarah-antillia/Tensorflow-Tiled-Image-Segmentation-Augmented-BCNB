@@ -1,6 +1,8 @@
 <h2>Tensorflow-Tiled-Image-Segmentation-Augmented-BCNB (2024/08/27)</h2>
 
-This is the first experiment of Tiled Image Segmentation for <a href="https://bcnb.grand-challenge.org/Dataset/">BCNB Dataset</a>
+This is the first experiment of Tiled Image Segmentation for <a href="https://bcnb.grand-challenge.org/Dataset/">
+Early Breast Cancer Core-Needle Biopsy WSI (BCNB)
+</a>
  based on
 the <a href="https://github.com/sarah-antillia/Tensorflow-Image-Segmentation-API">Tensorflow-Image-Segmentation-API</a>, and
 <a href="https://drive.google.com/file/d/1h5c1UeHNZmcqfvnym9bxmDhtYaao94G8/view?usp=sharing">
@@ -14,7 +16,7 @@ Tiled-ImageMask-Dataset-BCNB</a><br><br>
 In this experiment, we employed the following strategy:
 <b>
 <br>
-1. We trained and validated a TensorFlow UNet model using the Tiled-BCNB-ImageMask-Dataset for BrightField Weak Boundary, 
+1. We trained and validated a TensorFlow UNet model using the Tiled-BCNB-ImageMask-Dataset, 
 which was tiledly-splitted to 512x512
  and reduced to 512x512 image and mask dataset.<br>
 2. We applied the Tiled-Image Segmentation inference method to predict the tumoe regions for the mini_test images 
