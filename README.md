@@ -19,7 +19,7 @@ In this experiment, we employed the following strategy:
 1. We trained and validated a TensorFlow UNet model using the Tiled-BCNB-ImageMask-Dataset, 
 which was tiledly-splitted to 512x512
  and reduced to 512x512 image and mask dataset.<br>
-2. We applied the Tiled-Image Segmentation inference method to predict the tumoe regions for the mini_test images 
+2. We applied the Tiled-Image Segmentation inference method to predict the cancer regions for the mini_test images 
 with a resolution of 2K or 4K pixels. <br>
 </b>
 
