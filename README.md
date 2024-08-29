@@ -3,8 +3,6 @@
 <li>2024/08/30: Modified a train_eval_infer.config file to improve segmentation accuracy.</li>
 <br>
 
-<h2>Tensorflow-Tiled-Image-Segmentation-Augmented-BCNB (2024/08/27)</h2>
-
 This is the first experiment of Tiled Image Segmentation for <a href="https://bcnb.grand-challenge.org/Dataset/">
 Early Breast Cancer Core-Needle Biopsy WSI (BCNB)
 </a>
