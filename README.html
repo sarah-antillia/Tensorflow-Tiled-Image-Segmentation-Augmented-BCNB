@@ -1,6 +1,9 @@
-<h2>Tensorflow-Tiled-Image-Segmentation-Augmented-BCNB (2024/08/27)</h2>
-
-This is the first experiment of Tiled Image Segmentation for <a href="https://bcnb.grand-challenge.org/Dataset/">BCNB Dataset</a>
+<h2>Tensorflow-Tiled-Image-Segmentation-Augmented-BCNB (Updated: 2024/08/30)</h2>
+<li>2024/08/30: Modified a train_eval_infer.config file to improve segmentation accuracy.</li>
+<br>
+This is the first experiment of Tiled Image Segmentation for <a href="https://bcnb.grand-challenge.org/Dataset/">
+Early Breast Cancer Core-Needle Biopsy WSI (BCNB)
+</a>
  based on
 the <a href="https://github.com/sarah-antillia/Tensorflow-Image-Segmentation-API">Tensorflow-Image-Segmentation-API</a>, and
 <a href="https://drive.google.com/file/d/1h5c1UeHNZmcqfvnym9bxmDhtYaao94G8/view?usp=sharing">
@@ -14,10 +17,10 @@ Tiled-ImageMask-Dataset-BCNB</a><br><br>
 In this experiment, we employed the following strategy:
 <b>
 <br>
-1. We trained and validated a TensorFlow UNet model using the Tiled-BCNB-ImageMask-Dataset for BrightField Weak Boundary, 
+1. We trained and validated a TensorFlow UNet model using the Tiled-BCNB-ImageMask-Dataset, 
 which was tiledly-splitted to 512x512
  and reduced to 512x512 image and mask dataset.<br>
-2. We applied the Tiled-Image Segmentation inference method to predict the tumoe regions for the mini_test images 
+2. We applied the Tiled-Image Segmentation inference method to predict the cancer regions for the mini_test images 
 with a resolution of 2K or 4K pixels. <br>
 </b>
 
@@ -25,7 +28,7 @@ with a resolution of 2K or 4K pixels. <br>
 
 <hr>
 <b>Actual Tiled Image Segmentation for Images of 2K and 4K pixels</b><br>
-As shown below, the tiled inferred masks don't look similar to the ground truth masks. <br>
+As shown below, the tiled inferred masks look slightly similar to the ground truth masks. <br>
 <!--
 <b>TO DO to improve segmentation accuracy:</b><br>
 Change model or training parameters for our Segmentation model.<br>
@@ -174,7 +177,7 @@ Please move to ./projects/Tiled-BCNB and run the following bat file.<br>
 <hr>
 <pre>
 ; train_eval_infer.config
-; 2024/08/27 (C) antillia.com
+; 2024/08/29 (C) antillia.com
 
 [model]
 model          = "TensorflowUNet"
@@ -186,16 +189,22 @@ input_normalize = False
 normalization  = False
 num_classes    = 1
 base_filters   = 16
-base_kernels   = (9,9)
+base_kernels   = (11,11)
 num_layers     = 8
-dropout_rate   = 0.05
-learning_rate  = 0.00005
+dropout_rate   = 0.03
+learning_rate  = 0.00007
 clipvalue      = 0.5
 dilation       = (1,1)
 ;loss           = "bce_iou_loss"
 loss           = "bce_dice_loss"
 metrics        = ["dice_coef"]
 show_summary   = False
+
+[dataset]
+datasetclass  = "ImageMaskDataset"
+;Please specify a resize interpolation algorithm in case of ImageMaskDatast.
+resize_interpolation = "cv2.INTER_CUBIC"
+
 
 [train]
 epochs        = 100
@@ -221,7 +230,7 @@ num_infer_images       = 1
 create_backup  = False
 
 learning_rate_reducer = True
-reducer_factor     = 0.3
+reducer_factor     = 0.5
 reducer_patience   = 4
 save_weights_only  = True
 
@@ -238,7 +247,7 @@ images_dir    = "./mini_test/images"
 output_dir    = "./mini_test_output"
 
 [tiledinfer] 
-overlapping   = 64
+overlapping   = 80
 images_dir    = "./mini_test/images"
 output_dir    = "./mini_test_output_tiled"
 
@@ -269,7 +278,7 @@ augmentation = True
 vflip    = True
 hflip    = True
 rotation = True
-angles   = [90, 180, 210, 270, ]
+angles   = [30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330]
 shrinks  = [0.8,]
 shears   = [0.1]
 
@@ -299,6 +308,7 @@ k        = 1.0
 [brightening]
 alpha  = 1.2
 beta   = 10  
+
 </pre>
 <hr>
 <b>Model parameters</b><br>
@@ -308,7 +318,7 @@ and a large num_layers (including a bridge between Encoder and Decoder Blocks).
 <pre>
 [model]
 base_filters   = 16
-base_kernels   = (9,9)
+base_kernels   = (11,11)
 num_layers     = 8
 </pre>
 
@@ -316,7 +326,7 @@ num_layers     = 8
 Defined a small learning rate.  
 <pre>
 [model]
-learning_rate  = 0.00005
+learning_rate  = 0.00007
 </pre>
 
 <b>Online augmentation</b><br>
@@ -339,7 +349,7 @@ Enabled learing_rate_reducer callback, and a small reducer_patience.
 <pre> 
 [train]
 learning_rate_reducer = True
-reducer_factor     = 0.3
+reducer_factor     = 0.5
 reducer_patience   = 4
 </pre>
 <b>Early stopping callback</b><br>
@@ -372,8 +382,8 @@ By using these callbacks, on every epoch_change, the inference procedures can be
 <img src="./projects/TensorflowSlightlyFlexibleUNet/Tiled-BCNB/asset/epoch_change_tiledinfer.png" width="1024" height="auto"><br>
 <br>
 <br>
-In this experiment, the training process was stopped at epoch 46 by EarlyStopping Callback.<br><br>
-<img src="./projects/TensorflowSlightlyFlexibleUNet/Tiled-BCNB/asset/train_console_output_at_epoch_46.png" width="720" height="auto"><br>
+In this experiment, the training process was stopped at epoch 49 by EarlyStopping Callback.<br><br>
+<img src="./projects/TensorflowSlightlyFlexibleUNet/Tiled-BCNB/asset/train_console_output_at_epoch_49.png" width="720" height="auto"><br>
 <br>
 
 <br>
@@ -400,16 +410,21 @@ python ../../../src/TensorflowUNetEvaluator.py ./train_eval_infer_aug.config
 </pre>
 
 Evaluation console output:<br>
-<img src="./projects/TensorflowSlightlyFlexibleUNet/Tiled-BCNB/asset/evaluate_console_output_at_epoch_46.png" width="720" height="auto">
+<img src="./projects/TensorflowSlightlyFlexibleUNet/Tiled-BCNB/asset/evaluate_console_output_at_epoch_49.png" width="720" height="auto">
 <br><br>
 
 <a href="./projects/TensorflowSlightlyFlexibleUNet/Tiled-BCNB/evaluation.csv">evaluation.csv</a><br>
 
-The loss (bce_dice_loss) and dice_coef to this Tiled-BCNB/test were poor results. 
-This simple UNet Model <a href="./src/TensorflowUNet.py">TensorflowSlightlyFlexibleUNet</a> 
- failed to achieve the desired accuracy.
-We might change some parameters of our train_eval_infer.config file, or use other sophiscated UNet models 
-to improve segmentation accuracy. 
+In this experiment, the loss (bce_dice_loss) and dice_coef to this Tiled-BCNB/test were still poor results,
+but slightly improved from the previous results as shown below.
+<br>
+<pre>
+loss,0.3791
+dice_coef,0.4708
+</pre>
+
+
+<b>Previous results:</b><br>
 <pre>
 loss,0.4462
 dice_coef,0.384
@@ -502,7 +517,7 @@ python ../../../src/TensorflowUNetTiledInferencer.py ./train_eval_infer_aug.conf
   -->
 <b>Comparison of Non-tiled inferred mask and Tiled-Inferred mask</b><br>
 As shown below, both non-tiled and tiled inferred masks are far from the ground truth masks, 
-but non-tiled inference can generate slightly better results than non-tiled inferencer.
+but tiled inferencer can generate slightly better results than non-tiled inferencer.
 
 <br>
 <table>
